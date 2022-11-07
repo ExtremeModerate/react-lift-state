@@ -1,7 +1,8 @@
 import React, {ChangeEvent, FocusEvent, useEffect, useState} from 'react';
 import logo from './logo.svg';
-import './App.css';
-import {CartItem} from './CartItem/CartItem'
+import './App.scss';
+import {CartHeader, CartItem} from './components/CartItem/CartItem'
+import {currencyFormat} from "./helpers/currencyFormat";
 
 
 export const CATALOG_SIZE = 10;
@@ -54,13 +55,12 @@ function App() {
                 const qty = cart.get(key);
                 return (product && qty) ? total += product.price * qty : total;
             }, 0).toFixed(2));
-        console.log('useEffect cart', total);
         setTotalPrice(total);
     }, [cart, products]);
 
     useEffect(() => {
         console.table(products);
-        const initialCart = new Map(products.map((value) => [value.id, value.productType === ProductType.WARRANTY ? 0 : 1]));
+        const initialCart = new Map(products.map((value) => [value.id, value.productType === ProductType.WARRANTY ? 0 : 0]));
         setCart(initialCart);
     }, [products]);
 
@@ -88,7 +88,7 @@ function App() {
         let quantity = Number(event.target.value || 0);
         const newCart = new Map(cart);
         // if this is a warranty, zero all the others and make this quantity only one
-        if (product.productType === ProductType.WARRANTY && quantity) {
+        if (product.productType === ProductType.WARRANTY && quantity > 0) {
             products.filter((value) => value.productType === ProductType.WARRANTY).forEach((value) => {
                 newCart.set(value.id, 0);
             })
@@ -106,7 +106,8 @@ function App() {
                     Edit <code>src/App.tsx</code> and save to reload.
                 </p>
                 <div><h1>{time.toLocaleTimeString()}</h1></div>
-                <div>Total: ${totalPrice}</div>
+                <div>Total: {currencyFormat(totalPrice)}</div>
+                <CartHeader></CartHeader>
                 {products.map((product) => {
                         const cur = cart.get(product.id) || 0;
                         return <CartItem key={product.id} product={product} cart={cart} initialQuantity={cur}

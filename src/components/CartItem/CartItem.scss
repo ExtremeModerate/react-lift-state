@@ -21,6 +21,16 @@
 .CartItem__Name {
 }
 
+.Warranty {
+  &.Active {
+    color: green;
+  }
+
+  &.Inactive {
+    color: red;
+  }
+}
+
 .CartItem__Price {
 }
 
