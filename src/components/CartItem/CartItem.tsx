@@ -10,7 +10,6 @@ export interface CartItemProps {
     onBlur: (event: FocusEvent<HTMLInputElement>) => void;
 }
 
-
 export const CartItem = ({product, cart, initialQuantity, onBlur}: CartItemProps) => {
     const [qty, setQty] = useState(initialQuantity);
 
