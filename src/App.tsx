@@ -1,8 +1,9 @@
-import React, {ChangeEvent, FocusEvent, useEffect, useState} from 'react';
+import React, {ChangeEvent, FocusEvent, useEffect, useLayoutEffect, useState} from 'react';
 import logo from './logo.svg';
 import './App.scss';
 import {CartHeader, CartItem} from './components/CartItem/CartItem'
 import {currencyFormat} from "./helpers/currencyFormat";
+import axios from 'axios';
 
 
 export const CATALOG_SIZE = 10;
@@ -25,6 +26,11 @@ export interface Product {
     productType: ProductType;
 }
 
+export interface ProductDTO {
+    ProductId: number;
+    Description: string;
+}
+
 const buildProducts = (howMany = 1): Product[] => {
     const prods = [];
     const typeKeys = Object.keys(ProductType);
@@ -42,11 +48,68 @@ const buildProducts = (howMany = 1): Product[] => {
     return prods;
 }
 
+const fetchProducts = (howMany = 1): Product[] => {
+    const typeKeys = Object.keys(ProductType);
+    const prods: Product[] = [];
+    const x = axios.get<ProductDTO[]>('http://localhost:8090/api/products')
+        .then(function (response) {
+            // handle success
+            console.log(response);
+            response.data.forEach((item: ProductDTO) => {
+                const idx = Math.trunc(Math.random() * typeKeys.length);
+                const productType = ProductType[typeKeys[idx] as ProductTypeKeys];
+                prods.push({
+                    id: item.ProductId.toString(),
+                    name: item.Description,
+                    price: Number((Math.random() * 25).toFixed(2)),
+                    productType: productType
+                });
+            })
+        })
+        .catch(function (error) {
+            // handle error
+            console.log(error);
+        })
+        .finally(function () {
+            // always executed
+        });
+    return prods;
+}
+
 function App() {
     const [products, setProducts] = useState<Product[]>([]);
     const [time, setTime] = useState<Date>(new Date());
     const [cart, setCart] = useState<CartType>(new Map());
     const [totalPrice, setTotalPrice] = useState(0);
+    const [didMount, setDidMount] = useState(false);
+
+    useLayoutEffect(() => {
+        if (!didMount) {
+            setDidMount(true);
+        }
+        const interval = setInterval(() => {
+            setTime(new Date());
+        }, 1000);
+        return () => {
+            console.log('finishing useLayoutEffect')
+            setDidMount(false);
+            clearInterval(interval);
+        };
+    }, []);
+
+    useEffect(() => {
+        if (!didMount) {
+            console.log('not mounted, try again')
+            return;
+        }
+        if (products.length) {
+            console.log('already done');
+            return;
+        }
+        console.log('resetting products');
+        setProducts(fetchProducts(100));
+        // setProducts(buildProducts(CATALOG_SIZE));
+    }, [didMount]);
 
     useEffect(() => {
         const total =
@@ -64,23 +127,6 @@ function App() {
         setCart(initialCart);
     }, [products]);
 
-    useEffect(() => {
-        console.log('resetting products');
-        if (products.length) {
-            console.log('already done');
-            return;
-        }
-        setProducts(buildProducts(CATALOG_SIZE));
-    }, [products]);
-
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setTime(new Date());
-        }, 1000);
-        return () => {
-            clearInterval(interval);
-        };
-    }, []);
 
     const onInputBlur = (event: FocusEvent<HTMLInputElement>) => {
         const product = products.find((value) => value.id === event.target.id);
