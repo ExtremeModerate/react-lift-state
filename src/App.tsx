@@ -70,7 +70,7 @@ function App() {
         // console.table(products);
         console.log('Catalog size', products.length);
         const initialCart = new Map(
-            products.map((value) => [value.id, value.productType === ProductType.WARRANTY ? 0 : 0]),
+            products.map((value) => [value.id, value.productType === ProductType.WARRANTY ? 0 : 1]),
         );
         setCart(initialCart);
     }, [products]);

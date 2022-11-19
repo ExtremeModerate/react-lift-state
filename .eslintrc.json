@@ -38,7 +38,7 @@
   ],
   "rules": {
     "no-console": [
-      "warn",
+      "off",
       {
         "allow": [
           "warn",
