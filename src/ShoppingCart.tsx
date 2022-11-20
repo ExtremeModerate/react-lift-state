@@ -2,50 +2,38 @@ import logo from 'logo.svg';
 import { currencyFormat } from 'helpers';
 import { ProductList } from 'components/ProductList/ProductList';
 import React, { useEffect, useLayoutEffect, useState } from 'react';
-import { CartType, ProductType } from 'common/models';
 import { useCatalogContext } from 'contexts/CatalogContext';
+import { Clock } from 'components/Clock/Clock';
+import { useCartContext } from 'contexts/CartContext';
 
-export const MyApp = () => {
-    const [time, setTime] = useState<Date>(new Date());
-    const [cart, setCart] = useState<CartType>(new Map());
+export const ShoppingCart = () => {
     const [totalPrice, setTotalPrice] = useState(0);
-    const { products, updateCatalog } = useCatalogContext();
-
+    const { catalog, updateCatalog } = useCatalogContext();
+    const { cart, updateCart } = useCartContext();
     const [isMounted, setIsMounted] = useState(false);
+
+    const [size, setSize] = useState(42);
 
     useLayoutEffect(() => {
         if (!isMounted) {
             setIsMounted(true);
         }
-        const interval = setInterval(() => {
-            setTime(new Date());
-        }, 1000);
         return () => {
             setIsMounted(false);
-            clearInterval(interval);
         };
     }, []);
-
-    useEffect(() => {
-        if (!isMounted || products.length) {
-            return;
-        }
-
-        // fetchProducts(CATALOG_SIZE);
-    }, [isMounted]);
 
     useEffect(() => {
         if (!isMounted) {
             return;
         }
 
-        // console.table(products);
-        console.log('Catalog size', products.length);
-        const initialCart = new Map(
-            products.map((value) => [value.id, value.productType === ProductType.WARRANTY ? 0 : 1]),
-        );
-        setCart(initialCart);
-    }, [products]);
+        // console.table(catalog);
+        // const initialCart = new Map(
+        //     catalog.map((value) => [value.id, value.productType === ProductType.WARRANTY ? 0 : 1]),
+        // );
+        // updateCart(initialCart);
+    }, [catalog]);
 
     useLayoutEffect(() => {
         if (!isMounted) {
@@ -54,7 +42,7 @@ export const MyApp = () => {
         const total = Number(
             Array.from(cart.keys())
                 .reduce((total, key) => {
-                    const product = products.find((value) => value.id === key);
+                    const product = catalog.find((value) => value.id === key);
                     const qty = cart.get(key);
                     return product && qty ? (total += product.price * qty) : total;
                 }, 0)
@@ -62,20 +50,20 @@ export const MyApp = () => {
         );
         console.log('calculate total', total);
         setTotalPrice(total);
-    }, [cart, products]);
+    }, [cart, catalog]);
 
     return (
         <>
             <header className="App-header">
                 <img src={logo} className="App-logo" alt="logo" />
-                <p>
-                    Edit <code>src/App.tsx</code> and save to reload.
-                </p>
                 <div>
-                    <h1>{time.toLocaleTimeString()}</h1>
+                    <Clock style={{ color: 'green' }}>
+                        <label>Catalog: {catalog.length}</label>
+                        <label>Cart: {cart.size}</label>
+                    </Clock>
                 </div>
                 <div>Total: {currencyFormat(totalPrice)}</div>
-                <ProductList products={products} cart={cart} setCart={setCart}></ProductList>
+                <ProductList catalog={catalog} cart={cart} setCart={updateCart} />
             </header>
         </>
     );

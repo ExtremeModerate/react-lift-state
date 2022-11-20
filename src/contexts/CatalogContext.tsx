@@ -5,7 +5,6 @@ import axios from 'axios';
 import { CATALOG_SIZE } from 'common/constants';
 
 export interface CatalogContextValue {
-    products: Catalog;
     catalog: Catalog;
     updateCatalog: (value: Catalog) => void;
     fetchProducts: (howMany: number) => void;
@@ -26,7 +25,7 @@ export const CatalogContextProvider = ({ children }: any): JSX.Element => {
         }
         const autoTimer = setInterval(() => {
             setAutoUpdate(true);
-        }, 10000);
+        }, 1000 * 60 * 3);
         return () => {
             console.log('clearing autoTimer');
             setIsMounted(false);
@@ -53,8 +52,8 @@ export const CatalogContextProvider = ({ children }: any): JSX.Element => {
                 // handle success
                 console.log(response);
                 const prods: Product[] = response.data.slice(0, howMany).map((item: ProductDTO) => {
-                    const idx = Math.trunc(Math.random() * typeKeys.length);
-                    const productType = ProductType[typeKeys[idx] as ProductTypeKeys];
+                    const randomType = Math.trunc(Math.random() * typeKeys.length);
+                    const productType = ProductType[typeKeys[randomType] as ProductTypeKeys];
                     return {
                         id: item.ProductId.toString(),
                         name: item.Description,
@@ -73,7 +72,6 @@ export const CatalogContextProvider = ({ children }: any): JSX.Element => {
     };
 
     const catalogContextValue: CatalogContextValue = {
-        products: catalog,
         catalog,
         updateCatalog,
         fetchProducts,

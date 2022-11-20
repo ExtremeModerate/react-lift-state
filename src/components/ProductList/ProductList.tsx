@@ -1,16 +1,16 @@
 import { CartHeader, CartItem } from '../CartItem/CartItem';
-import React, { FocusEvent } from 'react';
-import { CartType, Product, ProductType } from 'common/models';
+import React, { FocusEvent, PropsWithChildren } from 'react';
+import { CartType, Catalog, ProductType } from 'common/models';
 
-export interface ProductListProps {
-    products: Product[];
+export interface ProductListProps extends PropsWithChildren {
+    catalog: Catalog;
     cart: CartType;
     setCart: (cart: CartType) => void;
 }
 
-export const ProductList = ({ products, cart, setCart }: ProductListProps) => {
+export const ProductList = ({ catalog, cart, setCart, children }: ProductListProps) => {
     const onInputBlur = (event: FocusEvent<HTMLInputElement>) => {
-        const product = products.find((value) => value.id === event.target.id);
+        const product = catalog.find((value) => value.id === event.target.id);
         if (!product) {
             return;
         }
@@ -20,23 +20,27 @@ export const ProductList = ({ products, cart, setCart }: ProductListProps) => {
         }
 
         const newCart = new Map(cart);
-        // if this is a warranty, zero all the others and make this quantity only one
         if (product.productType === ProductType.WARRANTY && quantity > 0) {
-            products
+            // if this is a warranty, zero all the others and make this quantity only one
+            catalog
                 .filter((value) => value.productType === ProductType.WARRANTY)
                 .forEach((value) => {
-                    newCart.set(value.id, 0);
+                    newCart.delete(value.id);
                 });
             quantity = 1;
         }
-        newCart.set(event.target.id, quantity);
+        if (quantity > 0) {
+            newCart.set(event.target.id, quantity);
+        } else {
+            newCart.delete(event.target.id);
+        }
         setCart(newCart);
     };
 
     return (
         <>
             <CartHeader></CartHeader>
-            {products.map((product) => {
+            {catalog.map((product) => {
                 const cur = cart.get(product.id) || 0;
                 return (
                     <CartItem
@@ -48,6 +52,7 @@ export const ProductList = ({ products, cart, setCart }: ProductListProps) => {
                     />
                 );
             })}
+            {children}
         </>
     );
 };

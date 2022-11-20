@@ -1,9 +1,9 @@
-import { createElement, FC, PropsWithChildren, ReactNode } from 'react';
+import { createElement, FC, PropsWithChildren } from 'react';
 import { CatalogContextProvider } from 'contexts/CatalogContext';
+import { CartContextProvider } from 'contexts/CartContext';
 
-interface ComposeProvidersProps {
+interface ComposeProvidersProps extends PropsWithChildren {
     providers: FC[];
-    children?: ReactNode;
 }
 
 const ComposeProviders = ({ providers, children }: ComposeProvidersProps) => (
@@ -15,6 +15,6 @@ const ComposeProviders = ({ providers, children }: ComposeProvidersProps) => (
 );
 
 export const ContextProvider: FC<PropsWithChildren> = ({ children }) => {
-    const providers: FC[] = [CatalogContextProvider];
+    const providers: FC[] = [CatalogContextProvider, CartContextProvider];
     return <ComposeProviders providers={providers}>{children}</ComposeProviders>;
 };

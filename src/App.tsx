@@ -1,13 +1,13 @@
 import React from 'react';
 import './App.scss';
 import { ContextProvider } from 'contexts/contextProvider';
-import { MyApp } from 'MyApp';
+import { ShoppingCart } from 'ShoppingCart';
 
 const App: React.FC = () => {
     return (
         <div className="App">
             <ContextProvider>
-                <MyApp></MyApp>
+                <ShoppingCart></ShoppingCart>
             </ContextProvider>
         </div>
     );
