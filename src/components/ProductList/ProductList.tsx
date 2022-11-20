@@ -1,6 +1,6 @@
 import { CartHeader, CartItem } from '../CartItem/CartItem';
 import React, { FocusEvent } from 'react';
-import { CartType, Product, ProductType } from '../../common/models';
+import { CartType, Product, ProductType } from 'common/models';
 
 export interface ProductListProps {
     products: Product[];

@@ -1,1 +1,1 @@
-export const CATALOG_SIZE = 300;
+export const CATALOG_SIZE = 30;

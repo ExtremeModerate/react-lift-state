@@ -5,3 +5,4 @@ export const currencyFormat = (value: number, decimal = 2) => {
         minimumFractionDigits: decimal,
     });
 };
+export default currencyFormat;

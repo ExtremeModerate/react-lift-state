@@ -16,6 +16,8 @@ export interface Product {
     productType: ProductType;
 }
 
+export type Catalog = Product[];
+
 export interface ProductDTO {
     ProductId: number;
     Description: string;

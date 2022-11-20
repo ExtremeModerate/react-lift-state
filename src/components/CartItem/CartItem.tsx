@@ -1,7 +1,7 @@
 import './CartItem.scss';
 import React, { ChangeEvent, FocusEvent, useEffect, useState } from 'react';
-import { currencyFormat } from '../../helpers/currencyFormat';
-import { CartType, Product, ProductType } from '../../common/models';
+import { currencyFormat } from 'helpers';
+import { CartType, Product, ProductType } from 'common/models';
 
 export interface CartItemProps {
     product: Product;
