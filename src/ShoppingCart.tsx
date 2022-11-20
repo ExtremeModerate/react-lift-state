@@ -1,18 +1,16 @@
 import logo from 'logo.svg';
-import { currencyFormat } from 'helpers';
-import { ProductList } from 'components/ProductList/ProductList';
-import React, { useEffect, useLayoutEffect, useState } from 'react';
-import { useCatalogContext } from 'contexts/CatalogContext';
-import { Clock } from 'components/Clock/Clock';
-import { useCartContext } from 'contexts/CartContext';
+import {currencyFormat} from 'helpers';
+import {ProductList} from 'components/ProductList/ProductList';
+import React, {useEffect, useLayoutEffect, useState} from 'react';
+import {useCatalogContext} from 'contexts/CatalogContext';
+import {Clock} from 'components/Clock/Clock';
+import {useCartContext} from 'contexts/CartContext';
 
 export const ShoppingCart = () => {
     const [totalPrice, setTotalPrice] = useState(0);
-    const { catalog, updateCatalog } = useCatalogContext();
-    const { cart, updateCart } = useCartContext();
+    const {catalog, lastUpdated} = useCatalogContext();
+    const {cart, updateCart} = useCartContext();
     const [isMounted, setIsMounted] = useState(false);
-
-    const [size, setSize] = useState(42);
 
     useLayoutEffect(() => {
         if (!isMounted) {
@@ -33,7 +31,7 @@ export const ShoppingCart = () => {
         //     catalog.map((value) => [value.id, value.productType === ProductType.WARRANTY ? 0 : 1]),
         // );
         // updateCart(initialCart);
-    }, [catalog]);
+    }, [catalog, isMounted]);
 
     useLayoutEffect(() => {
         if (!isMounted) {
@@ -50,20 +48,22 @@ export const ShoppingCart = () => {
         );
         console.log('calculate total', total);
         setTotalPrice(total);
-    }, [cart, catalog]);
+    }, [cart, catalog, isMounted]);
 
+    const lastUpdateDate = new Date(lastUpdated).toLocaleTimeString();
     return (
         <>
             <header className="App-header">
-                <img src={logo} className="App-logo" alt="logo" />
+                <img src={logo} className="App-logo" alt="logo"/>
                 <div>
-                    <Clock style={{ color: 'green' }}>
+                    <Clock style={{color: 'green'}}>
                         <label>Catalog: {catalog.length}</label>
                         <label>Cart: {cart.size}</label>
+                        <>Last Updated: {lastUpdateDate}</>
                     </Clock>
                 </div>
                 <div>Total: {currencyFormat(totalPrice)}</div>
-                <ProductList catalog={catalog} cart={cart} setCart={updateCart} />
+                <ProductList catalog={catalog} cart={cart} setCart={updateCart}/>
             </header>
         </>
     );

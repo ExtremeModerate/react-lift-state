@@ -38,7 +38,7 @@
   ],
   "rules": {
     "no-console": [
-      "off",
+      "warn",
       {
         "allow": [
           "warn",
@@ -65,14 +65,18 @@
       "all"
     ],
     "prettier/prettier": [
-      "error",
+      "warn",
       {
         "bracketSpacing": true,
         "printWidth": 120,
         "semi": true,
         "singleQuote": true,
         "tabWidth": 4,
-        "trailingComma": "all"
+        "trailingComma": "all",
+        "allow": [
+          "warn",
+          "error"
+        ]
       }
     ]
   },

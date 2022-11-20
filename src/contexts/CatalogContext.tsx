@@ -6,6 +6,7 @@ import { CATALOG_SIZE } from 'common/constants';
 
 export interface CatalogContextValue {
     catalog: Catalog;
+    lastUpdated: number;
     updateCatalog: (value: Catalog) => void;
     fetchProducts: (howMany: number) => void;
 }
@@ -15,7 +16,7 @@ export const [useCatalogContext, CatalogContext] = createTypeSafeContext<Catalog
 export const CatalogContextProvider = ({ children }: any): JSX.Element => {
     // this is marginally useful, but any time we create an estimate from the design, it gets saved here
     const [catalog, setCatalog] = useState<Catalog>([]);
-    const [lastUpdate, setLastUpdate] = useState<number>(Date.now);
+    const [lastUpdated, setLastUpdated] = useState<number>(Date.now());
     const [autoUpdate, setAutoUpdate] = useState(true);
     const [isMounted, setIsMounted] = useState(false);
 
@@ -42,7 +43,10 @@ export const CatalogContextProvider = ({ children }: any): JSX.Element => {
         setAutoUpdate(false);
     }, [autoUpdate, isMounted]);
 
-    const updateCatalog = setCatalog;
+    const updateCatalog = (value: Catalog) => {
+        setLastUpdated(Date.now());
+        setCatalog(value);
+    };
 
     const fetchProducts = async (howMany = 1): Promise<Product[]> => {
         const typeKeys = Object.keys(ProductType);
@@ -73,6 +77,7 @@ export const CatalogContextProvider = ({ children }: any): JSX.Element => {
 
     const catalogContextValue: CatalogContextValue = {
         catalog,
+        lastUpdated,
         updateCatalog,
         fetchProducts,
     };
