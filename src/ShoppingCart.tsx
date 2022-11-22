@@ -1,15 +1,14 @@
-import logo from 'logo.svg';
-import {currencyFormat} from 'helpers';
-import {ProductList} from 'components/ProductList/ProductList';
-import React, {useEffect, useLayoutEffect, useState} from 'react';
-import {useCatalogContext} from 'contexts/CatalogContext';
-import {Clock} from 'components/Clock/Clock';
-import {useCartContext} from 'contexts/CartContext';
+import { currencyFormat } from 'helpers';
+import { ProductList } from 'components/ProductList/ProductList';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
+import { useCatalogContext } from 'contexts/CatalogContext';
+import { useCartContext } from 'contexts/CartContext';
+import { AnalogClock } from 'components/AnalogClock/AnalogClock';
 
 export const ShoppingCart = () => {
     const [totalPrice, setTotalPrice] = useState(0);
-    const {catalog, lastUpdated} = useCatalogContext();
-    const {cart, updateCart} = useCartContext();
+    const { catalog, lastUpdated } = useCatalogContext();
+    const { cart, updateCart } = useCartContext();
     const [isMounted, setIsMounted] = useState(false);
 
     useLayoutEffect(() => {
@@ -54,16 +53,15 @@ export const ShoppingCart = () => {
     return (
         <>
             <header className="App-header">
-                <img src={logo} className="App-logo" alt="logo"/>
+                {/*<img src={logo} className="App-logo" alt="logo"/>*/}
+                <AnalogClock style={{ color: 'green' }} height={250} width={250} />
                 <div>
-                    <Clock style={{color: 'green'}}>
-                        <label>Catalog: {catalog.length}</label>
-                        <label>Cart: {cart.size}</label>
-                        <>Last Updated: {lastUpdateDate}</>
-                    </Clock>
+                    <label>Catalog: {catalog.length}</label>
+                    <label>Cart: {cart.size}</label>
+                    <>Last Updated: {lastUpdateDate}</>
                 </div>
                 <div>Total: {currencyFormat(totalPrice)}</div>
-                <ProductList catalog={catalog} cart={cart} setCart={updateCart}/>
+                <ProductList catalog={catalog} cart={cart} setCart={updateCart} />
             </header>
         </>
     );
